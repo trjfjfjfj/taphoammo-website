@@ -6,6 +6,11 @@ let userWallets = {}; // { email: { depositBalance, sellBalance } }
 let userProducts = {}; // { email: [products] }
 let transactionHistory = {}; // { email: [transactions] }
 
+// CONSTANTS
+const MIN_WITHDRAW = 200000; // 200k
+const MAX_WITHDRAW = 2000000; // 2 triệu
+const WITHDRAW_FEE_PERCENT = 15; // 15%
+
 // INITIALIZE
 function initUser(email) {
     if (!userWallets[email]) {
@@ -47,6 +52,7 @@ function handleLogin(event) {
         initUser(email);
         alert('✅ Đăng nhập thành công!');
         updateBalance();
+        updateMyProducts();
         closeLoginModal();
     } else {
         alert('❌ Email hoặc mật khẩu không chính xác!');
@@ -204,15 +210,17 @@ function handleDeposit(event) {
         return;
     }
 
+    // AUTO NHẬN TIỀN - Cộng thẳng vào ví nạp
     userWallets[currentUser].depositBalance += amount;
     transactionHistory[currentUser].push({
         type: 'nạp tiền',
         amount: amount,
         method: method,
+        status: 'thành công',
         date: new Date().toLocaleString('vi-VN')
     });
 
-    alert(`✅ Nạp tiền thành công! +${amount.toLocaleString('vi-VN')} VNĐ`);
+    alert(`✅ Nạp tiền thành công ngay lập tức!\n+${amount.toLocaleString('vi-VN')} VNĐ\n\nTiền đã được cộng vào ví nạp của bạn!`);
     updateBalance();
     closeDepositModal();
     event.target.reset();
@@ -236,10 +244,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if (withdrawInput) {
         withdrawInput.addEventListener('input', function() {
             const amount = parseInt(this.value) || 0;
-            const fee = Math.floor(amount * 0.15);
+            const fee = Math.floor(amount * (WITHDRAW_FEE_PERCENT / 100));
             const receive = amount - fee;
-            document.getElementById('withdrawFee').textContent = 
-                `Phí: ${fee.toLocaleString('vi-VN')} VNĐ | Nhận: ${receive.toLocaleString('vi-VN')} VNĐ`;
+            
+            let message = `Min: ${MIN_WITHDRAW.toLocaleString('vi-VN')} VNĐ | Max: ${MAX_WITHDRAW.toLocaleString('vi-VN')} VNĐ`;
+            if (amount > 0) {
+                message += `<br>Phí: ${fee.toLocaleString('vi-VN')} VNĐ | Nhận: ${receive.toLocaleString('vi-VN')} VNĐ`;
+            }
+            document.getElementById('withdrawFee').innerHTML = message;
         });
     }
 });
@@ -248,6 +260,17 @@ function handleWithdraw(event) {
     event.preventDefault();
     const amount = parseInt(document.getElementById('withdrawAmount').value);
     const bank = document.getElementById('bankAccount').value;
+
+    // Kiểm tra điều kiện rút tiền
+    if (amount < MIN_WITHDRAW) {
+        alert(`❌ Số tiền rút tối thiểu là ${MIN_WITHDRAW.toLocaleString('vi-VN')} VNĐ!`);
+        return;
+    }
+
+    if (amount > MAX_WITHDRAW) {
+        alert(`❌ Số tiền rút tối đa là ${MAX_WITHDRAW.toLocaleString('vi-VN')} VNĐ!`);
+        return;
+    }
 
     if (bank === 'Chọn tài khoản ngân hàng') {
         alert('⚠️ Vui lòng chọn tài khoản ngân hàng!');
@@ -260,7 +283,7 @@ function handleWithdraw(event) {
         return;
     }
 
-    const fee = Math.floor(amount * 0.15);
+    const fee = Math.floor(amount * (WITHDRAW_FEE_PERCENT / 100));
     const receive = amount - fee;
 
     wallet.sellBalance -= amount;
@@ -273,7 +296,7 @@ function handleWithdraw(event) {
         date: new Date().toLocaleString('vi-VN')
     });
 
-    alert(`✅ Rút tiền thành công!\nSố tiền: ${amount.toLocaleString('vi-VN')} VNĐ\nPhí: ${fee.toLocaleString('vi-VN')} VNĐ\nNhận: ${receive.toLocaleString('vi-VN')} VNĐ\n\nSẽ chuyển vào tài khoản ${bank} trong 1-24 giờ`);
+    alert(`✅ Rút tiền thành công!\n━━━━━━━━━━━━━\nSố tiền: ${amount.toLocaleString('vi-VN')} VNĐ\nPhí (15%): ${fee.toLocaleString('vi-VN')} VNĐ\nBạn nhận: ${receive.toLocaleString('vi-VN')} VNĐ\n━━━━━━━━━━━━━\nNgân hàng: ${bank}\nSẽ chuyển trong 1-24 giờ`);
     updateBalance();
     closeWithdrawModal();
     event.target.reset();
@@ -316,7 +339,7 @@ function handleSellProduct(event) {
 }
 
 function updateMyProducts() {
-    if (!currentUser) return;
+    if (!currentUser || !users[currentUser].isSeller) return;
     
     const productsDiv = document.getElementById('my-products');
     const products = userProducts[currentUser] || [];
@@ -336,7 +359,7 @@ function updateMyProducts() {
                 <p>${product.desc}</p>
                 <strong>${product.price.toLocaleString('vi-VN')} VNĐ</strong>
             </div>
-            <button onclick="simulateSale(${product.id})">Bán được</button>
+            <button onclick="simulateSale(${product.id})" class="btn-primary">Bán được</button>
         `;
         productsDiv.appendChild(item);
     });
@@ -355,7 +378,7 @@ function simulateSale(productId) {
             date: new Date().toLocaleString('vi-VN')
         });
         
-        alert(`✅ Bán được "${product.name}" - ${product.price.toLocaleString('vi-VN')} VNĐ\nTiền đã được thêm vào ví bán!`);
+        alert(`✅ Bán được "${product.name}"\n+${product.price.toLocaleString('vi-VN')} VNĐ\n\nTiền đã được thêm vào ví bán!`);
         updateBalance();
         updateMyProducts();
     }
@@ -378,12 +401,15 @@ function showHistoryModal() {
             const item = document.createElement('div');
             item.className = 'history-item';
             let details = `${transaction.type.toUpperCase()} - ${transaction.amount.toLocaleString('vi-VN')} VNĐ`;
+            
+            if (transaction.status) details += `<br>Trạng thái: ${transaction.status}`;
             if (transaction.items) details += `<br>Sản phẩm: ${transaction.items}`;
             if (transaction.method) details += `<br>Phương thức: ${transaction.method}`;
             if (transaction.bank) details += `<br>Ngân hàng: ${transaction.bank}`;
             if (transaction.fee) details += `<br>Phí: ${transaction.fee.toLocaleString('vi-VN')} VNĐ`;
             if (transaction.receive) details += `<br>Nhận: ${transaction.receive.toLocaleString('vi-VN')} VNĐ`;
             if (transaction.productName) details += `<br>Sản phẩm: ${transaction.productName}`;
+            
             item.innerHTML = `<strong>${transaction.date}</strong><br>${details}`;
             historyList.appendChild(item);
         });

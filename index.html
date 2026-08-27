@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TapHoaMmo - Nạp Tiền | Rút Tiền | Mua Bán Hàng</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- HEADER & NAVIGATION -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">🎁 TapHoaMmo</div>
+            <nav class="nav">
+                <a href="#home">Trang Chủ</a>
+                <a href="#products">Sản Phẩm</a>
+                <a href="#wallet">Ví Tiền</a>
+                <a href="#contact">Liên Hệ</a>
+                <a href="#" class="btn-login" onclick="showLoginModal()">Đăng Nhập</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Chào mừng đến TapHoaMmo</h1>
+            <p>Mua bán hàng, nạp tiền, rút tiền an toàn và nhanh chóng</p>
+            <button class="btn-primary" onclick="showLoginModal()">Bắt Đầu Ngay</button>
+        </div>
+    </section>
+
+    <!-- PRODUCTS SECTION -->
+    <section id="products" class="products">
+        <div class="container">
+            <h2>🛍️ Sản Phẩm</h2>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image">📱</div>
+                    <h3>Thẻ Điện Thoại</h3>
+                    <p>Giá: 50.000 - 500.000 VNĐ</p>
+                    <button class="btn-add-cart" onclick="addToCart('Thẻ Điện Thoại', 50000)">Mua Ngay</button>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">🎮</div>
+                    <h3>Thẻ Game</h3>
+                    <p>Giá: 20.000 - 1.000.000 VNĐ</p>
+                    <button class="btn-add-cart" onclick="addToCart('Thẻ Game', 20000)">Mua Ngay</button>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">💳</div>
+                    <h3>Thẻ Cào</h3>
+                    <p>Giá: 10.000 - 100.000 VNĐ</p>
+                    <button class="btn-add-cart" onclick="addToCart('Thẻ Cào', 10000)">Mua Ngay</button>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">🌐</div>
+                    <h3>Dịch Vụ Internet</h3>
+                    <p>Giá: 30.000 - 300.000 VNĐ</p>
+                    <button class="btn-add-cart" onclick="addToCart('Dịch Vụ Internet', 30000)">Mua Ngay</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WALLET SECTION -->
+    <section id="wallet" class="wallet">
+        <div class="container">
+            <h2>💰 Ví Tiền</h2>
+            <div class="wallet-container">
+                <div class="wallet-card">
+                    <h3>Số dư ví</h3>
+                    <p id="balance" class="balance-amount">0 VNĐ</p>
+                </div>
+                <div class="wallet-actions">
+                    <button class="btn-secondary" onclick="showDepositModal()">💳 Nạp Tiền</button>
+                    <button class="btn-secondary" onclick="showWithdrawModal()">💸 Rút Tiền</button>
+                    <button class="btn-secondary" onclick="showHistoryModal()">📜 Lịch Sử</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CART SECTION -->
+    <section class="cart-section">
+        <div class="container">
+            <h2>🛒 Giỏ Hàng</h2>
+            <div id="cart-items" class="cart-items"></div>
+            <div class="cart-summary">
+                <p>Tổng tiền: <span id="cart-total">0 VNĐ</span></p>
+                <button class="btn-primary" onclick="checkout()">Thanh Toán</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 TapHoaMmo. All rights reserved.</p>
+            <p>Hotline: 1900-1000-123 | Email: support@taphoammo.today</p>
+        </div>
+    </footer>
+
+    <!-- LOGIN MODAL -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <h2>Đăng Nhập</h2>
+            <form onsubmit="handleLogin(event)">
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Mật khẩu" required>
+                <button type="submit" class="btn-primary">Đăng Nhập</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DEPOSIT MODAL -->
+    <div id="depositModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDepositModal()">&times;</span>
+            <h2>💳 Nạp Tiền</h2>
+            <form onsubmit="handleDeposit(event)">
+                <input type="number" id="depositAmount" placeholder="Số tiền nạp" min="10000" required>
+                <select id="paymentMethod" required>
+                    <option>Chọn phương thức thanh toán</option>
+                    <option>Ngân hàng</option>
+                    <option>E-Wallet</option>
+                    <option>Thẻ Cào</option>
+                </select>
+                <button type="submit" class="btn-primary">Nạp Tiền</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- WITHDRAW MODAL -->
+    <div id="withdrawModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeWithdrawModal()">&times;</span>
+            <h2>💸 Rút Tiền</h2>
+            <form onsubmit="handleWithdraw(event)">
+                <input type="number" id="withdrawAmount" placeholder="Số tiền rút" min="10000" required>
+                <select id="bankAccount" required>
+                    <option>Chọn tài khoản ngân hàng</option>
+                    <option>Vietcombank</option>
+                    <option>Techcombank</option>
+                    <option>Agribank</option>
+                </select>
+                <button type="submit" class="btn-primary">Rút Tiền</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- HISTORY MODAL -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeHistoryModal()">&times;</span>
+            <h2>📜 Lịch Sử Giao Dịch</h2>
+            <div id="history-list" class="history-list"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

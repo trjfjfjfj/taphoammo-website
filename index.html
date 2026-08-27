@@ -21,8 +21,10 @@
                 <a href="#products">Sản Phẩm</a>
                 <a href="#wallet">Ví Tiền</a>
                 <a href="#contact">Liên Hệ</a>
-                <a href="#" class="btn-login" onclick="showLoginModal()">Đăng Nhập</a>
-                <a href="#" class="btn-login" onclick="showRegisterModal()">Đăng Ký</a>
+                <span id="userInfo" style="color: white; display: none;">Xin chào <strong id="userName"></strong></span>
+                <a href="#" class="btn-login" onclick="showLoginModal()" id="loginBtn">Đăng Nhập</a>
+                <a href="#" class="btn-login" onclick="showRegisterModal()" id="registerBtn">Đăng Ký</a>
+                <a href="#" class="btn-login" onclick="handleLogout()" id="logoutBtn" style="display: none; background: var(--danger);">Đăng Xuất</a>
             </nav>
         </div>
     </header>
@@ -109,7 +111,7 @@
     <section class="sell-section">
         <div class="container">
             <h2>📦 Bán Hàng</h2>
-            <button class="btn-primary" onclick="showSellModal()">+ Thêm Sản Phẩm Bán</button>
+            <button class="btn-primary" onclick="showSellModal()" id="sellProductBtn" style="display: none;">+ Thêm Sản Phẩm Bán</button>
             <div id="my-products" class="my-products"></div>
         </div>
     </section>
@@ -176,16 +178,30 @@
         <div class="modal-content">
             <span class="close" onclick="closeDepositModal()">&times;</span>
             <h2>💳 Nạp Tiền</h2>
-            <form onsubmit="handleDeposit(event)">
-                <input type="number" id="depositAmount" placeholder="Số tiền nạp" min="10000" required>
-                <select id="paymentMethod" required>
-                    <option>Chọn phương thức thanh toán</option>
-                    <option>Ngân hàng</option>
-                    <option>E-Wallet</option>
-                    <option>Thẻ Cào</option>
-                </select>
-                <button type="submit" class="btn-primary">Nạp Tiền</button>
-            </form>
+            <div id="depositStep1" style="display: block;">
+                <form onsubmit="handleDepositAmount(event)">
+                    <input type="number" id="depositAmount" placeholder="Số tiền nạp" min="10000" required>
+                    <select id="paymentMethod" required>
+                        <option>Chọn phương thức thanh toán</option>
+                        <option value="bank">Chuyển khoản Ngân hàng (Sepay)</option>
+                        <option value="momo">MoMo</option>
+                        <option value="card">Thẻ Cào</option>
+                    </select>
+                    <button type="submit" class="btn-primary">Tiếp Tục</button>
+                </form>
+            </div>
+
+            <div id="depositStep2" style="display: none;">
+                <div class="qr-section">
+                    <h3>📱 Quét mã QR để thanh toán</h3>
+                    <img id="qrCode" src="" alt="QR thanh toán" style="max-width: 100%; width: 300px; margin: 1rem 0;">
+                    <p id="bankInfo" style="background: #f0f0f0; padding: 1rem; border-radius: 5px; margin: 1rem 0;"></p>
+                    <p style="color: #ff6b35; font-weight: bold; text-align: center;">
+                        ⏱️ Tiền sẽ tự động nhận trong vòng 1-5 phút
+                    </p>
+                    <button class="btn-secondary" onclick="goBackDepositStep1()" style="width: 100%; margin-top: 1rem;">← Quay Lại</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -197,7 +213,7 @@
             <form onsubmit="handleWithdraw(event)">
                 <p style="color: #d62828; font-weight: bold;">Lưu ý: Mỗi lần rút sẽ bị trừ 15% phí</p>
                 <input type="number" id="withdrawAmount" placeholder="Số tiền rút" min="10000" required>
-                <p id="withdrawFee" style="color: var(--primary); font-weight: bold;">Phí: 0 VNĐ | Nhận: 0 VNĐ</p>
+                <p id="withdrawFee" style="color: var(--primary); font-weight: bold;">Min: 200.000 VNĐ | Max: 2.000.000 VNĐ</p>
                 <select id="bankAccount" required>
                     <option>Chọn tài khoản ngân hàng</option>
                     <option>Vietcombank</option>

@@ -2,14 +2,23 @@
 let users = {};
 let currentUser = null;
 let cart = [];
-let userWallets = {}; // { email: { depositBalance, sellBalance } }
-let userProducts = {}; // { email: [products] }
-let transactionHistory = {}; // { email: [transactions] }
+let userWallets = {};
+let userProducts = {};
+let transactionHistory = {};
 
 // CONSTANTS
-const MIN_WITHDRAW = 200000; // 200k
-const MAX_WITHDRAW = 2000000; // 2 triệu
-const WITHDRAW_FEE_PERCENT = 15; // 15%
+const MIN_WITHDRAW = 200000;
+const MAX_WITHDRAW = 2000000;
+const WITHDRAW_FEE_PERCENT = 15;
+
+// BANK INFO
+const BANK_CONFIG = {
+  bank: 'TPBank',
+  account: '10004525267',
+  accountName: 'HOANG GIA BAO',
+  accountNameENC: 'HOANG%20GIA%20BAO',
+  storeName: 'CTY%20TNHH%20TRUYEN%20THONG%20MEDIA%20ABNMXH'
+};
 
 // INITIALIZE
 function initUser(email) {
@@ -17,6 +26,28 @@ function initUser(email) {
         userWallets[email] = { depositBalance: 0, sellBalance: 0 };
         userProducts[email] = [];
         transactionHistory[email] = [];
+    }
+}
+
+// UPDATE UI AFTER LOGIN/LOGOUT
+function updateUIAfterAuth() {
+    if (currentUser) {
+        document.getElementById('loginBtn').style.display = 'none';
+        document.getElementById('registerBtn').style.display = 'none';
+        document.getElementById('logoutBtn').style.display = 'inline-block';
+        document.getElementById('userInfo').style.display = 'inline-block';
+        document.getElementById('userName').textContent = currentUser.split('@')[0];
+        
+        if (users[currentUser].isSeller) {
+            document.getElementById('sellProductBtn').style.display = 'inline-block';
+            updateMyProducts();
+        }
+    } else {
+        document.getElementById('loginBtn').style.display = 'inline-block';
+        document.getElementById('registerBtn').style.display = 'inline-block';
+        document.getElementById('logoutBtn').style.display = 'none';
+        document.getElementById('userInfo').style.display = 'none';
+        document.getElementById('sellProductBtn').style.display = 'none';
     }
 }
 
@@ -52,7 +83,7 @@ function handleLogin(event) {
         initUser(email);
         alert('✅ Đăng nhập thành công!');
         updateBalance();
-        updateMyProducts();
+        updateUIAfterAuth();
         closeLoginModal();
     } else {
         alert('❌ Email hoặc mật khẩu không chính xác!');
@@ -107,6 +138,16 @@ function handleRegister(event) {
     initUser(email);
     alert('✅ Đăng ký thành công! Vui lòng đăng nhập.');
     closeRegisterModal();
+}
+
+function handleLogout() {
+    if (confirm('Bạn chắc chắn muốn đăng xuất?')) {
+        currentUser = null;
+        cart = [];
+        updateUIAfterAuth();
+        updateCart();
+        alert('✅ Đã đăng xuất!');
+    }
 }
 
 // CART MANAGEMENT
@@ -194,13 +235,15 @@ function showDepositModal() {
         return;
     }
     document.getElementById('depositModal').style.display = 'block';
+    document.getElementById('depositStep1').style.display = 'block';
+    document.getElementById('depositStep2').style.display = 'none';
 }
 
 function closeDepositModal() {
     document.getElementById('depositModal').style.display = 'none';
 }
 
-function handleDeposit(event) {
+function handleDepositAmount(event) {
     event.preventDefault();
     const amount = parseInt(document.getElementById('depositAmount').value);
     const method = document.getElementById('paymentMethod').value;
@@ -210,12 +253,51 @@ function handleDeposit(event) {
         return;
     }
 
-    // AUTO NHẬN TIỀN - Cộng thẳng vào ví nạp
+    if (method === 'bank') {
+        // Hiển thị QR code
+        showQRCode(amount);
+    } else {
+        alert('🚀 Sắp hỗ trợ ' + (method === 'momo' ? 'MoMo' : 'Thẻ Cào') + '!');
+    }
+}
+
+// GENERATE QR CODE
+function showQRCode(amount) {
+    const qrUrl = `https://vietqr.app/img?bank=${BANK_CONFIG.bank}&acc=${BANK_CONFIG.account}&template=&showinfo=true&fullacc=true&holder=${BANK_CONFIG.accountNameENC}&store=${BANK_CONFIG.storeName}&amount=${amount}`;
+    
+    document.getElementById('qrCode').src = qrUrl;
+    document.getElementById('bankInfo').innerHTML = `
+        <strong>🏦 Thông tin chuyển khoản:</strong><br>
+        Ngân hàng: ${BANK_CONFIG.bank}<br>
+        Số tài khoản: ${BANK_CONFIG.account}<br>
+        Chủ tài khoản: ${BANK_CONFIG.accountName}<br>
+        <br>
+        <strong style="color: var(--primary);">Số tiền: ${amount.toLocaleString('vi-VN')} VNĐ</strong><br>
+        <br>
+        💬 Nội dung: Tên email hoặc SĐT của bạn
+    `;
+    
+    document.getElementById('depositStep1').style.display = 'none';
+    document.getElementById('depositStep2').style.display = 'block';
+
+    // Auto nhận tiền sau 3 giây
+    setTimeout(() => {
+        autoReceiveDeposit(amount, 'bank');
+    }, 3000);
+}
+
+function goBackDepositStep1() {
+    document.getElementById('depositStep1').style.display = 'block';
+    document.getElementById('depositStep2').style.display = 'none';
+}
+
+// AUTO NHẬN TIỀN
+function autoReceiveDeposit(amount, method) {
     userWallets[currentUser].depositBalance += amount;
     transactionHistory[currentUser].push({
         type: 'nạp tiền',
         amount: amount,
-        method: method,
+        method: method === 'bank' ? 'Sepay/Chuyển khoản' : method,
         status: 'thành công',
         date: new Date().toLocaleString('vi-VN')
     });
@@ -223,7 +305,6 @@ function handleDeposit(event) {
     alert(`✅ Nạp tiền thành công ngay lập tức!\n+${amount.toLocaleString('vi-VN')} VNĐ\n\nTiền đã được cộng vào ví nạp của bạn!`);
     updateBalance();
     closeDepositModal();
-    event.target.reset();
 }
 
 function showWithdrawModal() {
@@ -261,7 +342,6 @@ function handleWithdraw(event) {
     const amount = parseInt(document.getElementById('withdrawAmount').value);
     const bank = document.getElementById('bankAccount').value;
 
-    // Kiểm tra điều kiện rút tiền
     if (amount < MIN_WITHDRAW) {
         alert(`❌ Số tiền rút tối thiểu là ${MIN_WITHDRAW.toLocaleString('vi-VN')} VNĐ!`);
         return;
@@ -296,7 +376,7 @@ function handleWithdraw(event) {
         date: new Date().toLocaleString('vi-VN')
     });
 
-    alert(`✅ Rút tiền thành công!\n━━━━━━━━━━━━━\nSố tiền: ${amount.toLocaleString('vi-VN')} VNĐ\nPhí (15%): ${fee.toLocaleString('vi-VN')} VNĐ\nBạn nhận: ${receive.toLocaleString('vi-VN')} VNĐ\n━━━━━━━━━━━━━\nNgân hàng: ${bank}\nSẽ chuyển trong 1-24 giờ`);
+    alert(`✅ Rút tiền thành công!\n═══════════════════════════\nSố tiền: ${amount.toLocaleString('vi-VN')} VNĐ\nPhí (15%): ${fee.toLocaleString('vi-VN')} VNĐ\nBạn nhận: ${receive.toLocaleString('vi-VN')} VNĐ\n════════════════════════��══\nNgân hàng: ${bank}\nSẽ chuyển trong 1-24 giờ`);
     updateBalance();
     closeWithdrawModal();
     event.target.reset();
@@ -436,4 +516,5 @@ window.onclick = function(event) {
 // INITIAL LOAD
 window.addEventListener('load', () => {
     updateCart();
+    updateUIAfterAuth();
 });

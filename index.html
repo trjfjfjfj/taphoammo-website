@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TapHoaMmo - Nạp Tiền | Rút Tiền | Mua Bán Hàng</title>
+    <meta name="description" content="TapHoaMmo - Nền tảng mua bán hàng, nạp tiền, rút tiền an toàn và nhanh chóng">
+    <meta property="og:title" content="TapHoaMmo - Nạp Tiền | Rút Tiền | Mua Bán Hàng">
+    <meta property="og:description" content="Mua bán hàng, nạp tiền, rút tiền an toàn và nhanh chóng">
+    <meta property="og:url" content="https://chotainguyenmmo.cloud">
+    <link rel="canonical" href="https://chotainguyenmmo.cloud/">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -17,6 +22,7 @@
                 <a href="#wallet">Ví Tiền</a>
                 <a href="#contact">Liên Hệ</a>
                 <a href="#" class="btn-login" onclick="showLoginModal()">Đăng Nhập</a>
+                <a href="#" class="btn-login" onclick="showRegisterModal()">Đăng Ký</a>
             </nav>
         </div>
     </header>
@@ -68,14 +74,20 @@
         <div class="container">
             <h2>💰 Ví Tiền</h2>
             <div class="wallet-container">
-                <div class="wallet-card">
-                    <h3>Số dư ví</h3>
-                    <p id="balance" class="balance-amount">0 VNĐ</p>
+                <div class="wallet-info">
+                    <div class="wallet-card">
+                        <h3>Ví Nạp (Mua Hàng)</h3>
+                        <p id="depositBalance" class="balance-amount">0 VNĐ</p>
+                    </div>
+                    <div class="wallet-card">
+                        <h3>Ví Bán (Rút Tiền)</h3>
+                        <p id="sellBalance" class="balance-amount">0 VNĐ</p>
+                    </div>
                 </div>
                 <div class="wallet-actions">
                     <button class="btn-secondary" onclick="showDepositModal()">💳 Nạp Tiền</button>
-                    <button class="btn-secondary" onclick="showWithdrawModal()">💸 Rút Tiền</button>
-                    <button class="btn-secondary" onclick="showHistoryModal()">📜 Lịch Sử</button>
+                    <button class="btn-secondary" onclick="showWithdrawModal()">💸 Rút Tiền (Phí 15%)</button>
+                    <button class="btn-secondary" onclick="showHistoryModal()">📋 Lịch Sử</button>
                 </div>
             </div>
         </div>
@@ -93,11 +105,32 @@
         </div>
     </section>
 
+    <!-- SELL SECTION -->
+    <section class="sell-section">
+        <div class="container">
+            <h2>📦 Bán Hàng</h2>
+            <button class="btn-primary" onclick="showSellModal()">+ Thêm Sản Phẩm Bán</button>
+            <div id="my-products" class="my-products"></div>
+        </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2>📞 Liên Hệ</h2>
+            <div class="contact-info">
+                <p><strong>Hotline:</strong> 1900-1000-123</p>
+                <p><strong>Email:</strong> support@chotainguyenmmo.cloud</p>
+                <p><strong>Website:</strong> chotainguyenmmo.cloud</p>
+            </div>
+        </div>
+    </section>
+
     <!-- FOOTER -->
     <footer class="footer">
         <div class="container">
             <p>&copy; 2024 TapHoaMmo. All rights reserved.</p>
-            <p>Hotline: 1900-1000-123 | Email: support@taphoammo.today</p>
+            <p>Website: <a href="https://chotainguyenmmo.cloud" target="_blank">chotainguyenmmo.cloud</a></p>
         </div>
     </footer>
 
@@ -107,10 +140,34 @@
             <span class="close" onclick="closeLoginModal()">&times;</span>
             <h2>Đăng Nhập</h2>
             <form onsubmit="handleLogin(event)">
-                <input type="email" placeholder="Email" required>
-                <input type="password" placeholder="Mật khẩu" required>
+                <input type="email" id="loginEmail" placeholder="Email" required>
+                <input type="password" id="loginPassword" placeholder="Mật khẩu" required>
                 <button type="submit" class="btn-primary">Đăng Nhập</button>
             </form>
+            <p style="text-align: center; margin-top: 1rem;">Chưa có tài khoản? <a href="#" onclick="switchToRegister()">Đăng ký</a></p>
+        </div>
+    </div>
+
+    <!-- REGISTER MODAL -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeRegisterModal()">&times;</span>
+            <h2>Đăng Ký</h2>
+            <form onsubmit="handleRegister(event)">
+                <input type="text" id="registerName" placeholder="Họ tên" required>
+                <input type="email" id="registerEmail" placeholder="Email" required>
+                <input type="password" id="registerPassword" placeholder="Mật khẩu" required>
+                <input type="password" id="registerConfirm" placeholder="Xác nhận mật khẩu" required>
+                <label>
+                    <input type="checkbox" id="isSeller" onchange="toggleSellerInfo()"> Tôi muốn bán hàng
+                </label>
+                <div id="sellerInfo" style="display:none;">
+                    <input type="text" id="shopName" placeholder="Tên cửa hàng">
+                    <textarea id="shopDesc" placeholder="Mô tả cửa hàng"></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Đăng Ký</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem;">Đã có tài khoản? <a href="#" onclick="switchToLogin()">Đăng nhập</a></p>
         </div>
     </div>
 
@@ -136,9 +193,11 @@
     <div id="withdrawModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeWithdrawModal()">&times;</span>
-            <h2>💸 Rút Tiền</h2>
+            <h2>💸 Rút Tiền (Phí 15%)</h2>
             <form onsubmit="handleWithdraw(event)">
+                <p style="color: #d62828; font-weight: bold;">Lưu ý: Mỗi lần rút sẽ bị trừ 15% phí</p>
                 <input type="number" id="withdrawAmount" placeholder="Số tiền rút" min="10000" required>
+                <p id="withdrawFee" style="color: var(--primary); font-weight: bold;">Phí: 0 VNĐ | Nhận: 0 VNĐ</p>
                 <select id="bankAccount" required>
                     <option>Chọn tài khoản ngân hàng</option>
                     <option>Vietcombank</option>
@@ -150,11 +209,25 @@
         </div>
     </div>
 
+    <!-- SELL PRODUCT MODAL -->
+    <div id="sellModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSellModal()">&times;</span>
+            <h2>📦 Thêm Sản Phẩm Bán</h2>
+            <form onsubmit="handleSellProduct(event)">
+                <input type="text" id="productName" placeholder="Tên sản phẩm" required>
+                <input type="number" id="productPrice" placeholder="Giá bán" min="1000" required>
+                <textarea id="productDesc" placeholder="Mô tả sản phẩm"></textarea>
+                <button type="submit" class="btn-primary">Đăng Bán</button>
+            </form>
+        </div>
+    </div>
+
     <!-- HISTORY MODAL -->
     <div id="historyModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeHistoryModal()">&times;</span>
-            <h2>📜 Lịch Sử Giao Dịch</h2>
+            <h2>📋 Lịch Sử Giao Dịch</h2>
             <div id="history-list" class="history-list"></div>
         </div>
     </div>

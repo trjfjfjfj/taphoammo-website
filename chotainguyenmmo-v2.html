@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 ChoTaiNguyenMMO - Mua Bán Game & Tài Khoản</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        /* Header */
+        header {
+            background: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background: #f0f0f0;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .icon-btn:hover {
+            background: #e0e0e0;
+            transform: scale(1.1);
+        }
+
+        .menu-btn {
+            width: 40px;
+            height: 40px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        /* Dashboard Section */
+        .dashboard {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-title {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .dashboard-subtitle {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.15);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        /* Products Section */
+        .section {
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .view-all {
+            color: #667eea;
+            font-size: 0.9rem;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            position: relative;
+        }
+
+        .product-rating {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0,0,0,0.7);
+            color: #ffc107;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .product-favorite {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.7);
+            color: #ff6b6b;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .product-info {
+            padding: 12px;
+        }
+
+        .product-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            color: #333;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-price {
+            color: #666;
+            font-size: 0.75rem;
+            text-decoration: line-through;
+            margin-bottom: 5px;
+        }
+
+        .product-discount {
+            color: #2ecc71;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: #999;
+        }
+
+        /* Sellers Section */
+        .sellers-scroll {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .sellers-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .sellers-scroll::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+
+        .seller-card {
+            flex-shrink: 0;
+            width: 160px;
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .seller-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .seller-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 10px;
+            color: white;
+        }
+
+        .seller-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .seller-rating {
+            color: #ffc107;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+        }
+
+        .seller-status {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            flex-wrap: wrap;
+            font-size: 0.7rem;
+        }
+
+        .status-badge {
+            background: #f0f0f0;
+            padding: 3px 6px;
+            border-radius: 4px;
+            color: #666;
+        }
+
+        .status-verified {
+            background: #e8f5e9;
+            color: #2ecc71;
+        }
+
+        .status-fast {
+            background: #fff3e0;
+            color: #ff9800;
+        }
+
+        .seller-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 10px 0;
+            font-size: 0.8rem;
+        }
+
+        .seller-stat {
+            background: #f5f5f5;
+            padding: 6px;
+            border-radius: 4px;
+        }
+
+        .seller-stat-label {
+            color: #999;
+            font-size: 0.7rem;
+        }
+
+        .seller-stat-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* Live Feed Section */
+        .live-feed {
+            background: white;
+            padding: 15px;
+            margin: 10px 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .live-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .feed-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .feed-item:last-child {
+            border-bottom: none;
+        }
+
+        .feed-icon {
+            font-size: 1.3rem;
+        }
+
+        .feed-content {
+            flex: 1;
+        }
+
+        .feed-user {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .feed-action {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .feed-time {
+            color: #999;
+            font-size: 0.75rem;
+            margin-top: 3px;
+        }
+
+        /* Menu Modal */
+        .menu-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .menu-content {
+            background: white;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .menu-close {
+            text-align: right;
+            cursor: pointer;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .menu-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: #f5f5f5;
+            margin: 0 -20px;
+            padding: 15px 20px;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-icon {
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+
+        .auth-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            }
+
+            .dashboard-title {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            font-size: 0.9rem;
+        }
+
+        .footer-link {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">🎮 ChoTaiNguyenMMO</div>
+        <div class="header-icons">
+            <button class="icon-btn" onclick="alert('🔍 Tìm kiếm chức năng')">☀️</button>
+            <button class="icon-btn menu-btn" onclick="toggleMenu()">☰</button>
+        </div>
+    </header>
+
+    <!-- Dashboard -->
+    <section class="dashboard">
+        <h1 class="dashboard-title">Cộng Đông Đang Phát Triển</h1>
+        <p class="dashboard-subtitle">Minh bạch, trực quan và liên tục. Theo dõi hoạt động giao dịch trực tế trên toàn hệ thống.</p>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">THÀNH VIÊN ĐĂNG KỲ</div>
+                <div class="stat-value">12.816</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">ĐANG TRỰC TUYẾN</div>
+                <div class="stat-value">266</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">HOẠT ĐỘNG TRONG 24H</div>
+                <div class="stat-value">+152</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">ĐỘ TIN CẬY</div>
+                <div class="stat-value">99.9%</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sellers Section -->
+    <section class="section">
+        <div class="section-title">
+            👥 THÀNH VIÊN MỚI NHẤT
+            <a class="view-all" onclick="alert('📋 Xem tất cả thành viên')">Thời gian thực</a>
+        </div>
+        
+        <div class="sellers-scroll">
+            <div class="seller-card">
+                <div class="seller-avatar">H</div>
+                <div class="seller-name">Hà***Ho***tu***</div>
+                <div class="seller-rating">⭐ 5.0</div>
+                <div class="seller-status">
+                    <span class="status-badge status-verified">✓ Xác minh</span>
+                    <span class="status-badge status-fast">⚡ Giao nhanh</span>
+                </div>
+                <div class="seller-stats">
+                    <div class="seller-stat">
+                        <div class="seller-stat-label">Đã bán</div>
+                        <div class="seller-stat-value">25</div>
+                    </div>
+                    <div class="seller-stat">
+                        <div class="seller-stat-label">Sản phẩm</div>
+                        <div class="seller-stat-value">9</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="seller-card">
+                <div class="seller-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">T</div>
+                <div class="seller-name">Ti***</div>
+                <div class="seller-rating">⭐ 4.9</div>
+                <div class="seller-status">
+                    <span class="status-badge status-verified">✓ Xác minh</span>
+                </div>
+                <div class="seller-stats">
+                    <div class="seller-stat">
+                        <div class="seller-stat-label">Đã bán</div>
+                        <div class="seller-stat-value">42</div>
+                    </div>
+                    <div class="seller-stat">
+                        <div class="seller-stat-label">Sản phẩm</div>
+                        <div class="seller-stat-value">15</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="seller-card">
+                <div class="seller-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">A</div>
+                <div class="seller-name">An***Sh***4.***</div>
+                <div class="seller-rating">⭐ 5.0</div>
+                <div class="seller-status">
+                    <span class="status-badge status-verified">✓ Xác minh</span>
+                    <span class="status-badge status-fast">⚡ Giao nhanh</span>
+                </div>
+                <div class="seller-stats">
+                    <div class="seller-stat">
+                        <div class="seller-stat-label">Đã bán</div>
+                        <div class="seller-stat-value">58</div>
+                    </div>
+                    <div class="seller-stat">
+                        <div class="seller-stat-label">Sản phẩm</div>
+                        <div class="seller-stat-value">22</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="seller-card">
+                <div class="seller-avatar" style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);">Z</div>
+                <div class="seller-name">Zo***</div>
+                <div class="seller-rating">⭐ 4.8</div>
+                <div class="seller-status">
+                    <span class="status-badge status-verified">✓ Xác minh</span>
+                </div>
+                <div class="seller-stats">
+                    <div class="seller-stat">
+                        <div class="seller-stat-label">Đã bán</div>
+                        <div class="seller-stat-value">31</div>
+                    </div>
+                    <div class="seller-stat">
+                        <div class="seller-stat-label">Sản phẩm</div>
+                        <div class="seller-stat-value">12</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Feed -->
+    <section class="live-feed">
+        <div class="live-title">
+            <span class="live-dot"></span>
+            <span>BẢNG TIN GIAO DỊCH LIVE</span>
+        </div>
+
+        <div class="feed-item">
+            <div class="feed-icon">➕</div>
+            <div class="feed-content">
+                <div class="feed-user">Lo*** Lo***</div>
+                <div class="feed-action">vừa nạp tiền <strong>+24.000 đ</strong> vào ví.</div>
+                <div class="feed-time">8 giờ trước</div>
+            </div>
+        </div>
+
+        <div class="feed-item">
+            <div class="feed-icon">➕</div>
+            <div class="feed-content">
+                <div class="feed-user">Hu*** Ng*** Kh***</div>
+                <div class="feed-action">vừa nạp tiền <strong>+15.000 đ</strong> vào ví.</div>
+                <div class="feed-time">8 giờ trước</div>
+            </div>
+        </div>
+
+        <div class="feed-item">
+            <div class="feed-icon">🛍️</div>
+            <div class="feed-content">
+                <div class="feed-user">BC*** HP***</div>
+                <div class="feed-action">đã mua: <strong>Gmail Việt Cổ (201x - 2020)</strong></div>
+                <div class="feed-time">8 giờ trước</div>
+            </div>
+        </div>
+
+        <div class="feed-item">
+            <div class="feed-icon">➕</div>
+            <div class="feed-content">
+                <div class="feed-user">An*** Ng*** Kh***</div>
+                <div class="feed-action">vừa nạp tiền <strong>+50.000 đ</strong> vào ví.</div>
+                <div class="feed-time">12 giờ trước</div>
+            </div>
+        </div>
+
+        <div class="feed-item">
+            <div class="feed-icon">🛍️</div>
+            <div class="feed-content">
+                <div class="feed-user">ho*** ak***</div>
+                <div class="feed-action">đã mua: <strong>Netflix Tài Khoản Mạng Xã Hội</strong></div>
+                <div class="feed-time">13 giờ trước</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="section">
+        <div class="section-title">
+            🎮 GAME & TÀI KHOẢN
+            <a class="view-all" onclick="alert('🛍️ Xem tất cả sản phẩm')">Xem thêm</a>
+        </div>
+
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-image">
+                    <span class="product-rating">⭐ 5</span>
+                    <span class="product-favorite">❤️</span>
+                    YouTube Premium
+                </div>
+                <div class="product-info">
+                    <div class="product-name">YouTube Premium Bảo Hành Full</div>
+                    <div class="product-price">440.000đ</div>
+                    <div class="product-discount">30.000đ</div>
+                    <div class="product-footer">
+                        <span>Kho: 4</span>
+                        <span>Đã bán: 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">
+                    <span class="product-rating">⭐ 5</span>
+                    <span class="product-favorite">❤️</span>
+                    CapCut Pro
+                </div>
+                <div class="product-info">
+                    <div class="product-name">CapCut Pro Bảo Hành Full</div>
+                    <div class="product-price">79.000đ</div>
+                    <div class="product-discount">15.000đ</div>
+                    <div class="product-footer">
+                        <span>Kho: 3</span>
+                        <span>Đã bán: 9</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">
+                    <span class="product-rating">⭐ 5</span>
+                    <span class="product-favorite">❤️</span>
+                    Canva Pro
+                </div>
+                <div class="product-info">
+                    <div class="product-name">Canva EDU/PRO Add Fam Bảo Hành Full</div>
+                    <div class="product-price">150.000đ</div>
+                    <div class="product-discount">45.000đ</div>
+                    <div class="product-footer">
+                        <span>Kho: 3</span>
+                        <span>Đã bán: 6</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">
+                    <span class="product-rating">⭐ 5</span>
+                    <span class="product-favorite">❤️</span>
+                    Netflix
+                </div>
+                <div class="product-info">
+                    <div class="product-name">Tài Khoản Netflix</div>
+                    <div class="product-price">55.000đ</div>
+                    <div class="product-discount">35.000đ</div>
+                    <div class="product-footer">
+                        <span>Kho: 5</span>
+                        <span>Đã bán: 12</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">
+                    <span class="product-rating">⭐ 4</span>
+                    <span class="product-favorite">🤍</span>
+                    Gmail
+                </div>
+                <div class="product-info">
+                    <div class="product-name">Gmail Việt Cổ 2010-2015</div>
+                    <div class="product-price">120.000đ</div>
+                    <div class="product-discount">49.000đ</div>
+                    <div class="product-footer">
+                        <span>Kho: 8</span>
+                        <span>Đã bán: 24</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">
+                    <span class="product-rating">⭐ 5</span>
+                    <span class="product-favorite">❤️</span>
+                    Spotify
+                </div>
+                <div class="product-info">
+                    <div class="product-name">Spotify Premium Family</div>
+                    <div class="product-price">99.000đ</div>
+                    <div class="product-discount">29.000đ</div>
+                    <div class="product-footer">
+                        <span>Kho: 7</span>
+                        <span>Đã bán: 31</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quality Section -->
+    <section class="section" style="background: white; margin: 20px; border-radius: 12px; padding: 20px;">
+        <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; color: #333;">
+            🎯 MẶT HÀNG CHẤT LƯỢNG
+        </h2>
+        <p style="color: #666; font-size: 0.95rem; margin-bottom: 15px;">Đề Xuất Hàng Đầu Dành Cho Bạn</p>
+        
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <span class="product-rating">⭐ 5</span>
+                    <span class="product-favorite">❤️</span>
+                    Discord
+                </div>
+                <div class="product-info">
+                    <div class="product-name">Discord Nitro Family Pack</div>
+                    <div class="product-price">249.000đ</div>
+                    <div class="product-discount">89.000đ</div>
+                    <div class="product-footer">
+                        <span>Kho: 6</span>
+                        <span>Đã bán: 18</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <span class="product-rating">⭐ 5</span>
+                    <span class="product-favorite">❤️</span>
+                    Adobe
+                </div>
+                <div class="product-info">
+                    <div class="product-name">Adobe Creative Cloud</div>
+                    <div class="product-price">450.000đ</div>
+                    <div class="product-discount">199.000đ</div>
+                    <div class="product-footer">
+                        <span>Kho: 4</span>
+                        <span>Đã bán: 22</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <span class="product-rating">⭐ 5</span>
+                    <span class="product-favorite">❤️</span>
+                    Microsoft
+                </div>
+                <div class="product-info">
+                    <div class="product-name">Microsoft Office 365</div>
+                    <div class="product-price">320.000đ</div>
+                    <div class="product-discount">149.000đ</div>
+                    <div class="product-footer">
+                        <span>Kho: 10</span>
+                        <span>Đã bán: 45</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image" style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);">
+                    <span class="product-rating">⭐ 5</span>
+                    <span class="product-favorite">❤️</span>
+                    Notion
+                </div>
+                <div class="product-info">
+                    <div class="product-name">Notion Plus Lifetime</div>
+                    <div class="product-price">199.000đ</div>
+                    <div class="product-discount">79.000đ</div>
+                    <div class="product-footer">
+                        <span>Kho: 5</span>
+                        <span>Đã bán: 33</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Modal -->
+    <div class="menu-modal" id="menuModal">
+        <div class="menu-content">
+            <div class="menu-close" onclick="toggleMenu()">✕</div>
+            
+            <div class="menu-item" onclick="alert('🏠 Trang chủ')">
+                <span>🏠 Trang chủ</span>
+            </div>
+            
+            <div class="menu-item" onclick="alert('🛍️ Sản phẩm')">
+                <span>🛍️ Sản phẩm</span>
+            </div>
+            
+            <div class="menu-item" onclick="alert('💼 Dịch vụ')">
+                <span>💼 Dịch vụ</span>
+            </div>
+            
+            <div class="menu-item" onclick="alert('🏪 Gian hàng')">
+                <span>🏪 Gian hàng</span>
+            </div>
+            
+            <div class="menu-item" onclick="alert('🔍 Khám phá')">
+                <span>🔍 Khám phá</span>
+            </div>
+
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #f0f0f0;">
+                <div class="auth-buttons">
+                    <button class="btn btn-secondary" onclick="alert('📝 Đăng nhập')">Đăng Nhập</button>
+                    <button class="btn btn-primary" onclick="alert('✍️ Đăng Ký')">Đăng Kỳ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2024 ChoTaiNguyenMMO | 
+            <a class="footer-link" href="#">Giới thiệu</a> | 
+            <a class="footer-link" href="#">Liên hệ</a> | 
+            <a class="footer-link" href="#">Điều khoản</a>
+        </p>
+        <p style="margin-top: 10px; font-size: 0.8rem;">
+            🌐 <a class="footer-link" href="https://chotainguyenmmo.cloud">chotainguyenmmo.cloud</a>
+        </p>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const modal = document.getElementById('menuModal');
+            if (modal.style.display === 'block') {
+                modal.style.display = 'none';
+            } else {
+                modal.style.display = 'block';
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('menuModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+        });
+
+        // Add click event to product cards
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const name = this.querySelector('.product-name').textContent;
+                alert(`🛍️ Sản phẩm: ${name}\n\n💰 Bấm "Mua ngay" để thanh toán`);
+            });
+        });
+
+        // Add click event to seller cards
+        document.querySelectorAll('.seller-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const name = this.querySelector('.seller-name').textContent;
+                alert(`👤 Seller: ${name}\n\n📱 Xem shop của người bán`);
+            });
+        });
+    </script>
+</body>
+</html>
